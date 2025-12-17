@@ -1,44 +1,151 @@
- body {
-      font-family: Arial, sans-serif;
-      padding: 20px;
-      max-width: 600px;
-      margin: auto;
-    }
+/* Basic reset */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
 
-    h2 {
-      text-align: center;
-    }
+body {
+  margin: 0;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  background-color: #f5f5f5;
+  color: #222;
+}
 
-    input, select, button {
-      padding: 8px;
-      margin: 5px 0;
-      width: 100%;
-    }
+.wrapper {
+  max-width: 640px;
+  margin: 32px auto;
+  padding: 20px 18px 24px;
+  background-color: #ffffff;
+  border-radius: 8px;
+  border: 1px solid #e0e0e0;
+}
 
-    button {
-      cursor: pointer;
-    }
+.title {
+  text-align: center;
+  margin-bottom: 16px;
+}
 
-    ul {
-      list-style: none;
-      padding: 0;
-    }
+.title h1 {
+  margin: 0;
+  font-size: 1.7rem;
+}
 
-    li {
-      background: #f4f4f4;
-      margin: 8px 0;
-      padding: 10px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
+.title p {
+  margin: 4px 0 0;
+  font-size: 0.9rem;
+  color: #666;
+}
 
-    .actions button {
-      margin-left: 5px;
-    }
+.add-section,
+.filters-section,
+.list-section {
+  margin-top: 16px;
+}
 
-    .pagination {
-      display: flex;
-      justify-content: space-between;
-      margin-top: 10px;
-    }
+.add-section h3,
+.filters-section h3,
+.list-section h3 {
+  margin: 0 0 8px;
+  font-size: 1rem;
+}
+
+input,
+select {
+  width: 100%;
+  padding: 8px;
+  font: inherit;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+  background-color: #ffffff;
+}
+
+input:focus,
+select:focus {
+  outline: none;
+  border-color: #1976d2;
+}
+
+.row {
+  display: flex;
+  gap: 8px;
+}
+
+.contact-list {
+  margin-top: 8px;
+}
+
+.contact-list li {
+  list-style: none;
+  padding: 8px 10px;
+  margin-bottom: 6px;
+  border-radius: 4px;
+  border: 1px solid #e0e0e0;
+  background-color: #ffffff;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.95rem;
+}
+
+.contact-list li button {
+  padding: 4px 8px;
+  font-size: 0.8rem;
+}
+
+.pagination {
+  margin-top: 16px;
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.pagination button {
+  flex: 1;
+}
+
+.btn-primary,
+.btn-secondary,
+.pagination button {
+  font: inherit;
+  cursor: pointer;
+  border-radius: 4px;
+  padding: 8px 12px;
+  border: 1px solid transparent;
+}
+
+.btn-primary,
+.pagination button {
+  background-color: #1976d2;
+  border-color: #1976d2;
+  color: #ffffff;
+}
+
+.btn-secondary {
+  background-color: #e0e0e0;
+  border-color: #e0e0e0;
+  color: #333333;
+}
+
+.full-width {
+  width: 100%;
+  margin-top: 6px;
+}
+
+.btn-primary:hover,
+.btn-secondary:hover,
+.pagination button:hover {
+  filter: brightness(0.95);
+}
+
+@media (max-width: 600px) {
+  .wrapper {
+    margin: 16px;
+    padding: 16px 12px 20px;
+  }
+
+  .row {
+    flex-direction: column;
+  }
+}
