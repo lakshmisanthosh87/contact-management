@@ -3,23 +3,38 @@ const API = "http://localhost:5000/api/contact";
 let page = 1;
 const limit = 5;
 let editId = null;
+let currentSearch = "";
+
 
 // Load contacts on page load
 window.onload = loadContacts;
 
 // Load contacts
 async function loadContacts() {
-  const search = document.getElementById("search").value;
   const code = document.getElementById("filtercode").value;
   const sort = document.getElementById("sort").value;
 
-  const res = await fetch(
-    `${API}?page=${page}&limit=${limit}&search=${search}&code=${code}&sort=${sort}`
-  );
+  let url = `${API}?page=${page}&limit=${limit}`;
 
+  if (currentSearch) {
+    url += `&search=${encodeURIComponent(currentSearch)}`;
+  }
+
+  if (code !== "") {
+    url += `&code=${encodeURIComponent(code)}`; // ✅ FIX HERE
+  }
+
+  if (sort) {
+    url += `&sort=${sort}`;
+  }
+
+  const res = await fetch(url);
   const data = await res.json();
+
   showContacts(data.contacts);
 }
+
+
 
 // Show contacts in table
 function showContacts(contacts) {
@@ -66,10 +81,12 @@ async function addContact() {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(contact)
     });
+    
   }
 
   clearForm();
   loadContacts();
+  document.getElementById("saveBtn").innerText = "Save Contact";
 }
 
 // Delete contact
@@ -86,6 +103,7 @@ function editContact(id, name, phone, code) {
   document.getElementById("name").value = name;
   document.getElementById("phone").value = phone;
   document.getElementById("code").value = code;
+   document.getElementById("saveBtn").innerText = "Update Contact";
 }
 
 // Clear form
@@ -97,18 +115,20 @@ function clearForm() {
 
 // Search
 function searchContact() {
+  const input = document.getElementById("searchValue");
+  currentSearch = input.value;
   page = 1;
-  document.getElementById("search").value =
-    document.getElementById("searchValue").value;
   loadContacts();
 }
 
 
+
 // Filter
-document.getElementById("filtercode").addEventListener("change", () => {
-  page = 1;
-  loadContacts();
-});
+function filterByCode() {
+  page = 1;              // reset pagination
+  loadContacts();        // reload with selected code
+}
+
 
 // Sort
 document.getElementById("sort").addEventListener("change", () => {

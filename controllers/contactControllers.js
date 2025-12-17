@@ -21,14 +21,16 @@ export const getContacts = async (req, res) => {
   let query = {};
 
   // 🔍 SEARCH BY NAME
-  if (search) {
-    query.name = { $regex: search, $options: "i" };
-  }
+  if (search && search.trim() !== "") {
+  query.name = { $regex: search, $options: "i" };
+}
+
 
   // 🌍 FILTER BY COUNTRY CODE
-  if (code && code !== "all") {
-    query.countryCode = code;
-  }
+  if (code) {
+  query.countryCode = code;
+}
+
 
   // ⏱ SORT BY DATE
   let sortOption = { createdAt: -1 }; // latest first

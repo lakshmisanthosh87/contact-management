@@ -7,55 +7,89 @@
   <link rel="stylesheet" href="./style.css">
 </head>
 <body>
+  <div class="page">
+    <header class="page-header">
+      <h1>Contact Book</h1>
+      <p class="page-subtitle">Manage your contacts with search, filters and quick actions.</p>
+    </header>
 
-<h1>Contact Book</h1>
+    <main>
+      <!-- Filters & search -->
+      <section class="panel">
+        <h2 class="panel-title">Search & Filters</h2>
+        <div class="toolbar">
+          <input id="searchValue" placeholder="Search name" />
 
-<input id="searchValue" placeholder="Search name">
-
-<button type="button" onclick="searchContact()">Search</button>
-
-<select id="filtercode">
+          <select id="filtercode" onchange="filterByCode()">
   <option value="">All code</option>
   <option value="+91">+91</option>
   <option value="+1">+1</option>
   <option value="+44">+44</option>
 </select>
 
-<select id="sort">
-  <option value="latest">Latest</option>
-  <option value="old">Old</option>
-</select>
 
-<form>
-  <input id="name" placeholder="Contact Name" />
-  <input id="phone" placeholder="Phone Number" />
+          <select id="sort">
+            <option value="latest">Latest</option>
+            <option value="old">Old</option>
+          </select>
 
-  <select id="code">
-    <option value="+91">+91 (India)</option>
-    <option value="+1">+1 (USA)</option>
-    <option value="+44">+44 (UK)</option>
-  </select>
+          <button type="button" onclick="searchContact()">Search</button>
+        </div>
+      </section>
 
-  <button type="button" onclick="addContact()">Save Contact</button>
-</form>
+      <!-- Add / Edit form -->
+      <section class="panel">
+        <h2 class="panel-title">Add / Edit Contact</h2>
+        <form class="form-grid">
+          <div class="form-field">
+            <label for="name">Name</label>
+            <input id="name" placeholder="Contact Name" />
+          </div>
 
-<table border="1">
-  <thead>
-    <tr>
-      <th>Name</th>
-      <th>Phone</th>
-      <th>Code</th>
-      <th>Action</th>
-    </tr>
-  </thead>
-  <tbody id="contactTable"></tbody>
-</table>
+          <div class="form-field">
+            <label for="phone">Phone</label>
+            <input id="phone" placeholder="Phone Number" />
+          </div>
 
-<div class="pagination">
-  <button onclick="prevPage()">⬅ Prev</button>
-  <button onclick="nextPage()">Next ➡</button>
-</div>
+          <div class="form-field">
+            <label for="code">Country code</label>
+            <select id="code">
+              <option value="+91">+91 (India)</option>
+              <option value="+1">+1 (USA)</option>
+              <option value="+44">+44 (UK)</option>
+            </select>
+          </div>
 
-<script src="./app.js"></script>
+          <div class="form-actions">
+            <button type="button" id="saveBtn" onclick="addContact()">Save Contact</button>
+
+          </div>
+        </form>
+      </section>
+
+      <!-- Table -->
+      <section class="panel">
+        <h2 class="panel-title">Contacts</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Phone</th>
+              <th>Code</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody id="contactTable"></tbody>
+        </table>
+
+        <div class="pagination">
+          <button onclick="prevPage()">⬅ Prev</button>
+          <button onclick="nextPage()">Next ➡</button>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script src="./app.js"></script>
 </body>
 </html>
