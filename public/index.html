@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Contact Manager</title>
+</head>
+<body>
+
+<h2>Contact Management App</h2>
+
+<!-- Add Contact -->
+<input id="name" placeholder="Name">
+<input id="phone" placeholder="Phone">
+<select id="code">
+  <option value="+91">+91</option>
+  <option value="+1">+1</option>
+</select>
+<button onclick="addContact()">Add</button>
+
+<hr>
+
+<!-- Filters -->
+<input id="search" placeholder="Search name">
+
+<select id="filterCode">
+  <option value="">All</option>
+  <option value="+91">+91</option>
+  <option value="+1">+1</option>
+</select>
+
+<select id="sort">
+  <option value="latest">Latest</option>
+  <option value="old">Old</option>
+</select>
+
+<button onclick="loadContacts()">Search</button>
+
+<ul id="list"></ul>
+
+<button onclick="prevPage()">Prev</button>
+<button onclick="nextPage()">Next</button>
+
+<script src="script.js"></script>
+</body>
+</html>
