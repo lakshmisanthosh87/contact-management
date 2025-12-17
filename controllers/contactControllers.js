@@ -2,7 +2,7 @@
 import Contact from "../models/contact.js";
 
 
-export const addcontacts = async (req,res) => {
+export const addcontacts = async (req, res) => {
     console.log("function add contact called")
     console.log(req.body, "req.body consoled")
     try {
@@ -20,6 +20,18 @@ export const addcontacts = async (req,res) => {
     }
 }
 
+
+export const getAllContacts = async (req, res) => {
+    try {
+          
+        const display=await Contact.find().limit(8)
+        console.log(display)
+        res.status(200).json({ message: "Display contact successfully", display })
+
+    } catch (error) {
+        res.status(500).json({ message: "internl sever error", error })
+    }
+}
 
 
 // export const updatecontacts = async (res, req) => {

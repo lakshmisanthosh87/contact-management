@@ -1,5 +1,5 @@
 import express from "express"
-import { addcontacts } from "../controllers/contactControllers.js";
+import { addcontacts,getAllContacts } from "../controllers/contactControllers.js";
 
 // import {getcontacts,addcontacts,deletecontacts,updatecontacts} from "./controllers/contactControllers.js"
 
@@ -17,6 +17,7 @@ console.log("routes reached")
 
 
 routers.post("/", addcontacts)
+routers.get('/',getAllContacts)
 
 // routers.put("/",updatecontacts)
 
