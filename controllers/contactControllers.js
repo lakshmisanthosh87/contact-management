@@ -1,57 +1,33 @@
-
 import Contact from "../models/contact.js";
 
 
-export const addcontacts = async (req, res) => {
-    console.log("function add contact called")
-    console.log(req.body, "req.body consoled")
-    try {
-        const { name, phone, countryCode } = req.body
-
-        console.log(name, phone, countryCode, "name,phone,countrycode")
-        const contact = await Contact.create({ name, phone, countryCode })
-
-        console.log(contact)
-        res.status(200).json({ message: "contact added successfully", contact })
-    }
-    catch (error) {
-        console.log(error, "error creating the contact")
-        res.status(500).json({ message: "not addedcontacts" })
-    }
-}
+export const addContact = async (req, res) => {
+  const contact = await Contact.create(req.body);
+  res.json(contact);
+};
 
 
-export const getAllContacts = async (req, res) => {
-    try {
-          
-        const display=await Contact.find().limit(8)
-        console.log(display)
-        res.status(200).json({ message: "Display contact successfully", display })
+export const getContacts = async (req, res) => {
+  const page = Number(req.query.page) || 1;
+  const limit = Number(req.query.limit) || 5;
+  const skip = (page - 1) * limit;
 
-    } catch (error) {
-        res.status(500).json({ message: "internl sever error", error })
-    }
-}
+  const contacts = await Contact.find().limit(limit).skip(skip);
+  res.json({ contacts });
+};
 
 
-// export const updatecontacts = async (res, req) => {
-//     try {
-//         const { name, phone, countryCode } = req.body
-//         const edit = await Contact.findByIdAndUpdate(req.params.id, { name, phone, countryCode }, { new: true })
-//         res.json(edit)
-//     }
-//     catch (error) {
-//         res.status(400).json({ message: "edit not working" })
-//     }
-// }
+export const updateContact = async (req, res) => {
+  const contact = await Contact.findByIdAndUpdate(
+    req.params.id,
+    req.body,
+    { new: true }
+  );
+  res.json(contact);
+};
 
 
-// export const deletecontacts = async (res, req) => {
-//     try {
-//         await contact.findByIdAndDelete(req.params.id)
-//         res.json({ message: "delete successful" })
-//     }
-//     catch (error) {
-
-//     }
-// }
+export const deleteContact = async (req, res) => {
+  await Contact.findByIdAndDelete(req.params.id);
+  res.json({ message: "Deleted" });
+};

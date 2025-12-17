@@ -1,44 +1,68 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>Contact Manager</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="./style.css">
 </head>
 <body>
+    <div class="wrapper">
 
-<h2>Contact Management App</h2>
+  <div class="title">
+    <h1>📇 My Contacts</h1>
+    <p>Simple & fast contact management</p>
+  </div>
 
-<!-- Add Contact -->
-<input id="name" placeholder="Name">
-<input id="phone" placeholder="Phone">
-<select id="code">
-  <option value="+91">+91</option>
-  <option value="+1">+1</option>
-</select>
-<button onclick="addContact()">Add</button>
+  <!-- Add Contact Card -->
+  <div class="add-card">
+    <h3>Add / Edit Contact</h3>
 
-<hr>
+    <input id="name" placeholder="Contact Name">
 
-<!-- Filters -->
-<input id="search" placeholder="Search name">
+    <div class="row">
+      <select id="code">
+        <option value="+91">+91 (India)</option>
+        <option value="+1">+1 (USA)</option>
+        <option value="+44">+44 (UK)</option>
+      </select>
 
-<select id="filterCode">
-  <option value="">All</option>
-  <option value="+91">+91</option>
-  <option value="+1">+1</option>
-</select>
+      <input id="phone" placeholder="Phone Number">
+    </div>
 
-<select id="sort">
-  <option value="latest">Latest</option>
-  <option value="old">Old</option>
-</select>
+    <button class="btn-add" onclick="addContact()">Save Contact</button>
+  </div>
 
-<button onclick="loadContacts()">Search</button>
+  <!-- Filters -->
+  <div class="filters">
+    <input id="search" placeholder="Search by name">
+    
+    <select id="filterCode">
+      <option value="">All Codes</option>
+      <option value="+91">+91</option>
+      <option value="+1">+1</option>
+      <option value="+44">+44</option>
+    </select>
 
-<ul id="list"></ul>
+    <select id="sort">
+      <option value="latest">Latest</option>
+      <option value="old">Oldest</option>
+    </select>
 
-<button onclick="prevPage()">Prev</button>
-<button onclick="nextPage()">Next</button>
+    <button onclick="loadContacts()">Search</button>
+  </div>
 
-<script src="script.js"></script>
+  <!-- Contact List -->
+  <div class="contact-list" id="list"></div>
+
+  <!-- Pagination -->
+  <div class="pagination">
+    <button onclick="prevPage()">⬅ Prev</button>
+    <button onclick="nextPage()">Next ➡</button>
+  </div>
+
+</div>
+
+<script src="./app.js"></script>
 </body>
 </html>
