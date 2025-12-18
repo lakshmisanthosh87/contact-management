@@ -22,7 +22,7 @@ async function loadContacts() {
   }
 
   if (code !== "") {
-    url += `&code=${encodeURIComponent(code)}`; // ✅ FIX HERE
+    url += `&code=${encodeURIComponent(code)}`;
   }
 
   if (sort) {
@@ -69,7 +69,6 @@ async function addContact() {
   const phone = document.getElementById("phone").value.trim();
   const code = document.getElementById("code").value;
 
-  // ✅ Basic validation
   // Name validation
 if (!name) {
   alert("Name is required");
@@ -88,10 +87,12 @@ if (!phone) {
 }
 
 
-if (!/^[1-9][0-9]{9,10}$/.test(phone)) {
-  alert("Phone must be 10 or 11 digits and should not start with 0");
+// Phone validation: 10 or 11 digits and starts with 6-9
+if (!/^[6-9][0-9]{9,10}$/.test(phone)) {
+  alert("Phone number must be 10 or 11 digits and start with 6, 7, 8, or 9");
   return;
 }
+
 
 
   const contact = { name, phone, countryCode: code };
@@ -114,7 +115,7 @@ if (!/^[1-9][0-9]{9,10}$/.test(phone)) {
 const data = await res.json();
 
 if (!res.ok) {
-  alert(data.message); // ✅ show backend message
+  alert(data.message);
   return;
 }
 
@@ -161,22 +162,14 @@ function searchContact() {
   loadContacts();
 }
 
-
-
-
-
 function filterByCode() {
   page = 1;             
   loadContacts();        
 }
 
-
-
 document.getElementById("sort").addEventListener("change", () => {
   loadContacts();
 });
-
-
 
 
 function updatePaginationButtons() {

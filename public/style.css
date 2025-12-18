@@ -192,6 +192,12 @@ td button {
   filter: brightness(1.1);
 }
 
+.pagination button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+
 @media (max-width: 800px) {
   .form-grid {
     grid-template-columns: 1fr;

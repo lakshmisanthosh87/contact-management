@@ -12,12 +12,13 @@ export const addContact = async (req, res) => {
       });
     }
 
-    // Phone validation
-    if (!/^[1-9][0-9]{9,10}$/.test(phone)) {
-      return res.status(400).json({
-        message: "Phone must be 10 or 11 digits and should not start with 0"
-      });
-    }
+    //// Phone validation
+if (!/^[6-9][0-9]{9,10}$/.test(phone)) {
+  return res.status(400).json({
+    message: "Phone number must be 10 or 11 digits and start with 6, 7, 8, or 9"
+  });
+}
+
 
     // Duplicate phone check
     const existing = await Contact.findOne({ phone });
@@ -35,8 +36,6 @@ export const addContact = async (req, res) => {
     res.status(500).json({ message: "Server error" });
   }
 };
-
-
 
 
 export const getContacts = async (req, res) => {
