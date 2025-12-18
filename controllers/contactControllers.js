@@ -48,9 +48,15 @@ export const getContacts = async (req, res) => {
 
     let query = {};
 
-    if (search && search.trim() !== "") {
-      query.name = { $regex: search, $options: "i" };
-    }
+     if (search && search.trim() !== "") {
+  const escapedSearch = search.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&'); // escape special chars
+  query.$or = [
+    { name: { $regex: `^${escapedSearch}`, $options: "i" } },        // starts with
+    { phone: { $regex: `^${escapedSearch}` } },                      // starts with digits
+    { countryCode: { $regex: `^${escapedSearch}` } }                 // starts with code
+  ];
+}
+
 
     if (code) {
       query.countryCode = code;
