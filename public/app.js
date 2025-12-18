@@ -4,6 +4,8 @@ let page = 1;
 const limit = 5;
 let editId = null;
 let currentSearch = "";
+let totalContacts = 0;
+
 
 
 window.onload = loadContacts;
@@ -28,9 +30,13 @@ async function loadContacts() {
   }
 
   const res = await fetch(url);
-  const data = await res.json();
+const data = await res.json();
 
-  showContacts(data.contacts);
+totalContacts = data.total;
+
+showContacts(data.contacts);
+updatePaginationButtons();
+
 }
 
 
@@ -64,20 +70,29 @@ async function addContact() {
   const code = document.getElementById("code").value;
 
   // ✅ Basic validation
-  if (!name) {
-    alert("Name is required");
-    return;
-  }
-
-  if (!phone) {
-    alert("Phone number is required");
-    return;
-  }
-
-  if (!/^[0-9]{10,11}$/.test(phone)) {
-  alert("Phone number must be 10 or 11 digits");
+  // Name validation
+if (!name) {
+  alert("Name is required");
   return;
 }
+
+if (name.length < 3) {
+  alert("Name must have at least 3 characters");
+  return;
+}
+
+// Phone validation
+if (!phone) {
+  alert("Phone number is required");
+  return;
+}
+
+
+if (!/^[1-9][0-9]{9,10}$/.test(phone)) {
+  alert("Phone must be 10 or 11 digits and should not start with 0");
+  return;
+}
+
 
   const contact = { name, phone, countryCode: code };
 
@@ -162,10 +177,29 @@ document.getElementById("sort").addEventListener("change", () => {
 });
 
 
-function nextPage() {
-  page++;
-  loadContacts();
+
+
+function updatePaginationButtons() {
+  const prevBtn = document.getElementById("prevBtn");
+  const nextBtn = document.getElementById("nextBtn");
+
+  // Prev disabled on page 1
+  prevBtn.disabled = page === 1;
+
+  // Next disabled on last page
+  const lastPage = Math.ceil(totalContacts / limit);
+  nextBtn.disabled = page >= lastPage;
 }
+
+
+function nextPage() {
+  const lastPage = Math.ceil(totalContacts / limit);
+  if (page < lastPage) {
+    page++;
+    loadContacts();
+  }
+}
+
 
 function prevPage() {
   if (page > 1) {
