@@ -18,7 +18,11 @@
       <section class="panel">
         <h2 class="panel-title">Search & Filters</h2>
         <div class="toolbar">
-          <input id="searchValue" placeholder="Search name" />
+         <input
+  id="searchValue"
+  placeholder="Search name"
+  oninput="searchContact()"
+/>
 
           <select id="filtercode" onchange="filterByCode()">
   <option value="">All code</option>
@@ -33,7 +37,7 @@
             <option value="old">Old</option>
           </select>
 
-          <button type="button" onclick="searchContact()">Search</button>
+         
         </div>
       </section>
 

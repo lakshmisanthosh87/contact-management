@@ -1,44 +1,38 @@
 import Contact from "../models/contact.js";
 
-/* ---------------- ADD CONTACT ---------------- */
+
 export const addContact = async (req, res) => {
   const contact = await Contact.create(req.body);
   res.json(contact);
 };
 
-/* ---------------- GET CONTACTS (SEARCH + FILTER + SORT + PAGINATION) ---------------- */
+
 export const getContacts = async (req, res) => {
 
-  // 1️⃣ Pagination values
   const page = Number(req.query.page) || 1;
   const limit = Number(req.query.limit) || 5;
   const skip = (page - 1) * limit;
 
-  // 2️⃣ Get query values from frontend
+ 
   const { search, code, sort } = req.query;
 
-  // 3️⃣ Empty query object
+  
   let query = {};
 
-  // 🔍 SEARCH BY NAME
+ 
   if (search && search.trim() !== "") {
   query.name = { $regex: search, $options: "i" };
 }
-
-
-  // 🌍 FILTER BY COUNTRY CODE
+ 
   if (code) {
   query.countryCode = code;
 }
 
-
-  // ⏱ SORT BY DATE
-  let sortOption = { createdAt: -1 }; // latest first
+  let sortOption = { createdAt: -1 }; 
   if (sort === "old") {
-    sortOption = { createdAt: 1 }; // oldest first
+    sortOption = { createdAt: 1 }; 
   }
 
-  // 4️⃣ Fetch contacts from DB
   const contacts = await Contact.find(query)
     .sort(sortOption)
     .limit(limit)
@@ -47,7 +41,7 @@ export const getContacts = async (req, res) => {
   res.json({ contacts });
 };
 
-/* ---------------- UPDATE CONTACT ---------------- */
+
 export const updateContact = async (req, res) => {
   const contact = await Contact.findByIdAndUpdate(
     req.params.id,
@@ -57,7 +51,7 @@ export const updateContact = async (req, res) => {
   res.json(contact);
 };
 
-/* ---------------- DELETE CONTACT ---------------- */
+
 export const deleteContact = async (req, res) => {
   await Contact.findByIdAndDelete(req.params.id);
   res.json({ message: "Deleted" });
