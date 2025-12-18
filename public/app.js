@@ -6,10 +6,9 @@ let editId = null;
 let currentSearch = "";
 
 
-// Load contacts on page load
 window.onload = loadContacts;
 
-// Load contacts
+
 async function loadContacts() {
   const code = document.getElementById("filtercode").value;
   const sort = document.getElementById("sort").value;
@@ -36,7 +35,7 @@ async function loadContacts() {
 
 
 
-// Show contacts in table
+
 function showContacts(contacts) {
   const tbody = document.getElementById("contactTable");
   tbody.innerHTML = "";
@@ -60,44 +59,58 @@ function showContacts(contacts) {
 
 // Add or Update contact
 async function addContact() {
-  const name = document.getElementById("name").value;
-  const phone = document.getElementById("phone").value;
+  const name = document.getElementById("name").value.trim();
+  const phone = document.getElementById("phone").value.trim();
   const code = document.getElementById("code").value;
+
+  // ✅ Basic validation
+  if (!name) {
+    alert("Name is required");
+    return;
+  }
+
+  if (!phone) {
+    alert("Phone number is required");
+    return;
+  }
+
+  if (!/^[0-9]{10,11}$/.test(phone)) {
+  alert("Phone number must be 10 or 11 digits");
+  return;
+}
 
   const contact = { name, phone, countryCode: code };
 
   if (editId) {
-    // UPDATE
     await fetch(`${API}/${editId}`, {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(contact)
     });
     editId = null;
+    document.getElementById("saveBtn").innerText = "Save Contact";
   } else {
-    // ADD
-    await fetch(API, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(contact)
-    });
-    
+    const res = await fetch(API, {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify(contact)
+});
+
+const data = await res.json();
+
+if (!res.ok) {
+  alert(data.message); // ✅ show backend message
+  return;
+}
+
   }
 
   clearForm();
   loadContacts();
-  document.getElementById("saveBtn").innerText = "Save Contact";
 }
 
-// Delete contact
-async function deleteContact(id) {
-  await fetch(`${API}/${id}`, {
-    method: "DELETE"
-  });
-  loadContacts();
-}
 
-// Edit contact
+// Edit 
 function editContact(id, name, phone, code) {
   editId = id;
   document.getElementById("name").value = name;
@@ -106,7 +119,20 @@ function editContact(id, name, phone, code) {
    document.getElementById("saveBtn").innerText = "Update Contact";
 }
 
-// Clear form
+
+// Delete contact
+async function deleteContact(id) {
+  const confirmDelete = confirm("Are you sure you want to delete this contact?");
+  if (!confirmDelete) return;
+
+  await fetch(`${API}/${id}`, {
+    method: "DELETE"
+  });
+
+  loadContacts();
+}
+
+
 function clearForm() {
   document.getElementById("name").value = "";
   document.getElementById("phone").value = "";
@@ -115,27 +141,27 @@ function clearForm() {
 
 // Search
 function searchContact() {
-  const input = document.getElementById("searchValue");
-  currentSearch = input.value;
+  currentSearch = document.getElementById("searchValue").value;
   page = 1;
   loadContacts();
 }
 
 
 
-// Filter
+
+
 function filterByCode() {
-  page = 1;              // reset pagination
-  loadContacts();        // reload with selected code
+  page = 1;             
+  loadContacts();        
 }
 
 
-// Sort
+
 document.getElementById("sort").addEventListener("change", () => {
   loadContacts();
 });
 
-// Pagination
+
 function nextPage() {
   page++;
   loadContacts();

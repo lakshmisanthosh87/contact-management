@@ -2,9 +2,37 @@ import Contact from "../models/contact.js";
 
 
 export const addContact = async (req, res) => {
-  const contact = await Contact.create(req.body);
-  res.json(contact);
+  try {
+    const { name, phone, countryCode } = req.body;
+
+    if (!name || !phone || !countryCode) {
+      return res.status(400).json({ message: "All fields are required" });
+    }
+
+    // ✅ Phone must be 10 or 11 digits
+    if (!/^[0-9]{10,11}$/.test(phone)) {
+      return res.status(400).json({
+        message: "Phone number must be 10 or 11 digits"
+      });
+    }
+
+    // ✅ Check duplicate phone
+    const existing = await Contact.findOne({ phone });
+    if (existing) {
+      return res.status(400).json({
+        message: "This phone number already exists"
+      });
+    }
+
+    const contact = await Contact.create({ name, phone, countryCode });
+    res.json(contact);
+
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Server error" });
+  }
 };
+
 
 
 export const getContacts = async (req, res) => {
@@ -23,6 +51,7 @@ export const getContacts = async (req, res) => {
   if (search && search.trim() !== "") {
   query.name = { $regex: search, $options: "i" };
 }
+
  
   if (code) {
   query.countryCode = code;
