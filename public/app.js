@@ -1,4 +1,4 @@
-const API = "http://localhost:5000/api/contact";
+const API = "http://localhost:4000/api/contact";
 
 let page = 1;
 const limit = 5;
@@ -6,10 +6,29 @@ let editId = null;
 let currentSearch = "";
 let totalContacts = 0;
 
-
-
 window.onload = loadContacts;
 
+function showToast(message, type = "success") {
+  const container = document.getElementById("toastContainer");
+  const toast = document.createElement("div");
+  toast.className = `toast ${type}`;
+  
+  const iconName = type === "success" ? "check-circle" : "alert-circle";
+  toast.innerHTML = `
+    <i data-lucide="${iconName}"></i>
+    <span>${message}</span>
+  `;
+  
+  container.appendChild(toast);
+  lucide.createIcons();
+
+  setTimeout(() => {
+    toast.style.opacity = "0";
+    toast.style.transform = "translateX(100%)";
+    toast.style.transition = "all 0.3s ease";
+    setTimeout(() => toast.remove(), 300);
+  }, 3000);
+}
 
 async function loadContacts() {
   const code = document.getElementById("filtercode").value;
@@ -29,125 +48,151 @@ async function loadContacts() {
     url += `&sort=${sort}`;
   }
 
-  const res = await fetch(url);
-const data = await res.json();
+  try {
+    const res = await fetch(url);
+    const data = await res.json();
 
-totalContacts = data.total;
-
-showContacts(data.contacts);
-updatePaginationButtons();
-
+    totalContacts = data.total;
+    showContacts(data.contacts);
+    updatePaginationUI();
+  } catch (error) {
+    showToast("Failed to load contacts", "error");
+  }
 }
-
-
-
 
 function showContacts(contacts) {
   const tbody = document.getElementById("contactTable");
   tbody.innerHTML = "";
 
+  if (contacts.length === 0) {
+    tbody.innerHTML = `<tr><td colspan="4" style="text-align: center; color: var(--text-secondary); padding: 3rem;">No contacts found</td></tr>`;
+    return;
+  }
+
   contacts.forEach(c => {
     const row = document.createElement("tr");
 
     row.innerHTML = `
-      <td>${c.name}</td>
-      <td>${c.phone}</td>
-      <td>${c.countryCode}</td>
+      <td style="font-weight: 500;">${c.name}</td>
       <td>
-        <button onclick="editContact('${c._id}','${c.name}','${c.phone}','${c.countryCode}')">Edit</button>
-        <button onclick="deleteContact('${c._id}')">Delete</button>
+        <span style="background: var(--bg-input); padding: 2px 8px; border-radius: 4px; font-size: 0.85rem;">
+          ${c.countryCode}
+        </span>
+      </td>
+      <td style="font-family: monospace; letter-spacing: 0.05em;">${c.phone}</td>
+      <td>
+        <div class="action-btns">
+          <button class="btn btn-edit" title="Edit Contact" onclick="editContact('${c._id}','${c.name}','${c.phone}','${c.countryCode}')">
+            <i data-lucide="edit-3" style="width: 18px;"></i>
+          </button>
+          <button class="btn btn-delete" title="Delete Contact" onclick="deleteContact('${c._id}')">
+            <i data-lucide="trash-2" style="width: 18px;"></i>
+          </button>
+        </div>
       </td>
     `;
 
     tbody.appendChild(row);
   });
+  
+  lucide.createIcons();
 }
 
-// Add or Update contact
 async function addContact() {
   const name = document.getElementById("name").value.trim();
   const phone = document.getElementById("phone").value.trim();
   const code = document.getElementById("code").value;
 
-  // Name validation
-if (!name) {
-  alert("Name is required");
-  return;
-}
+  if (!name || name.length < 3) {
+    showToast("Name must have at least 3 characters", "error");
+    return;
+  }
 
-if (name.length < 3) {
-  alert("Name must have at least 3 characters");
-  return;
-}
-
-// Phone validation
-if (!phone) {
-  alert("Phone number is required");
-  return;
-}
-
-
-// Phone validation: 10 or 11 digits and starts with 6-9
-if (!/^[6-9][0-9]{9,10}$/.test(phone)) {
-  alert("Phone number must be 10 or 11 digits and start with 6, 7, 8, or 9");
-  return;
-}
-
-
+  if (!/^[6-9][0-9]{9,10}$/.test(phone)) {
+    showToast("Invalid phone number format", "error");
+    return;
+  }
 
   const contact = { name, phone, countryCode: code };
 
-  if (editId) {
-    await fetch(`${API}/${editId}`, {
-      method: "PUT",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(contact)
-    });
-    editId = null;
-    document.getElementById("saveBtn").innerText = "Save Contact";
-  } else {
-    const res = await fetch(API, {
-  method: "POST",
-  headers: { "Content-Type": "application/json" },
-  body: JSON.stringify(contact)
-});
+  try {
+    if (editId) {
+      const res = await fetch(`${API}/${editId}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(contact)
+      });
+      
+      if (res.ok) {
+        showToast("Contact updated successfully!");
+        cancelEdit();
+      } else {
+        const data = await res.json();
+        showToast(data.message || "Update failed", "error");
+      }
+    } else {
+      const res = await fetch(API, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(contact)
+      });
 
-const data = await res.json();
+      const data = await res.json();
 
-if (!res.ok) {
-  alert(data.message);
-  return;
-}
-
+      if (res.ok) {
+        showToast("Contact added successfully!");
+        clearForm();
+      } else {
+        showToast(data.message || "Failed to add contact", "error");
+        return;
+      }
+    }
+    loadContacts();
+  } catch (error) {
+    showToast("Server connection error", "error");
   }
-
-  clearForm();
-  loadContacts();
 }
 
-
-// Edit 
 function editContact(id, name, phone, code) {
   editId = id;
   document.getElementById("name").value = name;
   document.getElementById("phone").value = phone;
   document.getElementById("code").value = code;
-   document.getElementById("saveBtn").innerText = "Update Contact";
+  
+  document.getElementById("formTitle").innerText = "Edit Contact";
+  document.getElementById("saveBtn").querySelector('span').innerText = "Update Contact";
+  document.getElementById("saveBtn").querySelector('i').setAttribute('data-lucide', 'refresh-cw');
+  document.getElementById("cancelBtn").classList.remove("hidden");
+  
+  lucide.createIcons();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
+function cancelEdit() {
+  editId = null;
+  clearForm();
+  document.getElementById("formTitle").innerText = "Add New Contact";
+  document.getElementById("saveBtn").querySelector('span').innerText = "Save Contact";
+  document.getElementById("saveBtn").querySelector('i').setAttribute('data-lucide', 'save');
+  document.getElementById("cancelBtn").classList.add("hidden");
+  lucide.createIcons();
+}
 
-// Delete contact
 async function deleteContact(id) {
-  const confirmDelete = confirm("Are you sure you want to delete this contact?");
-  if (!confirmDelete) return;
+  if (!confirm("Are you sure you want to delete this contact?")) return;
 
-  await fetch(`${API}/${id}`, {
-    method: "DELETE"
-  });
-
-  loadContacts();
+  try {
+    const res = await fetch(`${API}/${id}`, { method: "DELETE" });
+    if (res.ok) {
+      showToast("Contact deleted successfully!");
+      loadContacts();
+    } else {
+      showToast("Failed to delete contact", "error");
+    }
+  } catch (error) {
+    showToast("Server connection error", "error");
+  }
 }
-
 
 function clearForm() {
   document.getElementById("name").value = "";
@@ -155,7 +200,6 @@ function clearForm() {
   document.getElementById("code").value = "+91";
 }
 
-// Search
 function searchContact() {
   currentSearch = document.getElementById("searchValue").value;
   page = 1;
@@ -163,27 +207,24 @@ function searchContact() {
 }
 
 function filterByCode() {
-  page = 1;             
-  loadContacts();        
+  page = 1;
+  loadContacts();
 }
 
-document.getElementById("sort").addEventListener("change", () => {
-  loadContacts();
-});
-
-
-function updatePaginationButtons() {
+function updatePaginationUI() {
   const prevBtn = document.getElementById("prevBtn");
   const nextBtn = document.getElementById("nextBtn");
+  const lastPage = Math.ceil(totalContacts / limit) || 1;
 
-  // Prev disabled on page 1
   prevBtn.disabled = page === 1;
-
-  // Next disabled on last page
-  const lastPage = Math.ceil(totalContacts / limit);
   nextBtn.disabled = page >= lastPage;
-}
 
+  const start = totalContacts === 0 ? 0 : (page - 1) * limit + 1;
+  const end = Math.min(page * limit, totalContacts);
+  
+  document.getElementById("paginationRange").innerText = `${start}-${end}`;
+  document.getElementById("totalCount").innerText = totalContacts;
+}
 
 function nextPage() {
   const lastPage = Math.ceil(totalContacts / limit);
@@ -192,7 +233,6 @@ function nextPage() {
     loadContacts();
   }
 }
-
 
 function prevPage() {
   if (page > 1) {

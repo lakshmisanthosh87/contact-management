@@ -3,97 +3,157 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Contact Book</title>
+  <title>Contact Book | Professional Management</title>
+  <!-- Google Fonts: Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" rel="stylesheet">
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
   <link rel="stylesheet" href="./style.css">
 </head>
 <body>
-  <div class="page">
-    <header class="page-header">
-      <h1>Contact Book</h1>
-      <p class="page-subtitle">Manage your contacts with search, filters and quick actions.</p>
+  <div class="app-container">
+    <header class="main-header">
+      <div class="header-content">
+        <div class="logo">
+          <i data-lucide="contact-2" class="logo-icon"></i>
+          <h1>Contact<span class="highlight">Book</span></h1>
+        </div>
+        <p class="subtitle">Securely manage your professional and personal network.</p>
+      </div>
     </header>
 
-    <main>
-      <!-- Filters & search -->
-      <section class="panel">
-        <h2 class="panel-title">Search & Filters</h2>
-        <div class="toolbar">
-         <input
-  id="searchValue"
-  placeholder="Search name"
-  oninput="searchContact()"
-/>
+    <main class="dashboard">
+      <div class="dashboard-grid">
+        <!-- Sidebar / Actions -->
+        <aside class="sidebar">
+          <section class="card form-card">
+            <div class="card-header">
+              <i data-lucide="user-plus" class="card-icon"></i>
+              <h2 id="formTitle">Add New Contact</h2>
+            </div>
+            <form id="contactForm" class="contact-form">
+              <div class="field-group">
+                <label for="name">Full Name</label>
+                <div class="input-wrapper">
+                  <i data-lucide="user" class="input-icon"></i>
+                  <input id="name" type="text" placeholder="John Doe" required />
+                </div>
+              </div>
 
-          <select id="filtercode" onchange="filterByCode()">
-  <option value="">All code</option>
-  <option value="+91">+91</option>
-  <option value="+1">+1</option>
-  <option value="+44">+44</option>
-</select>
+              <div class="field-row">
+                <div class="field-group">
+                  <label for="code">Country Code</label>
+                  <div class="input-wrapper">
+                    <i data-lucide="globe" class="input-icon"></i>
+                    <select id="code">
+                      <option value="+91">+91 (India)</option>
+                      <option value="+1">+1 (USA)</option>
+                      <option value="+44">+44 (UK)</option>
+                    </select>
+                  </div>
+                </div>
 
+                <div class="field-group">
+                  <label for="phone">Phone Number</label>
+                  <div class="input-wrapper">
+                    <i data-lucide="phone" class="input-icon"></i>
+                    <input id="phone" type="tel" placeholder="9876543210" required />
+                  </div>
+                </div>
+              </div>
 
-          <select id="sort">
-            <option value="latest">Latest</option>
-            <option value="old">Old</option>
-          </select>
+              <div class="form-footer">
+                <button type="button" id="saveBtn" class="btn btn-primary" onclick="addContact()">
+                  <i data-lucide="save" class="btn-icon"></i>
+                  <span>Save Contact</span>
+                </button>
+                <button type="button" id="cancelBtn" class="btn btn-secondary hidden" onclick="cancelEdit()">
+                  <span>Cancel</span>
+                </button>
+              </div>
+            </form>
+          </section>
+        </aside>
 
-         
+        <!-- Main Content / Table -->
+        <div class="main-content">
+          <section class="card filter-card">
+            <div class="toolbar">
+              <div class="search-box">
+                <i data-lucide="search" class="search-icon"></i>
+                <input
+                  id="searchValue"
+                  placeholder="Search contacts by name, phone or code..."
+                  oninput="searchContact()"
+                />
+              </div>
+
+              <div class="filters">
+                <div class="filter-group">
+                  <i data-lucide="filter" class="filter-icon"></i>
+                  <select id="filtercode" onchange="filterByCode()">
+                    <option value="">All Regions</option>
+                    <option value="+91">+91</option>
+                    <option value="+1">+1</option>
+                    <option value="+44">+44</option>
+                  </select>
+                </div>
+
+                <div class="filter-group">
+                  <i data-lucide="arrow-up-down" class="filter-icon"></i>
+                  <select id="sort" onchange="loadContacts()">
+                    <option value="latest">Newest First</option>
+                    <option value="old">Oldest First</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <section class="card list-card">
+            <div class="table-container">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Name</th>
+                    <th>Region</th>
+                    <th>Phone Number</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="contactTable">
+                  <!-- Contacts injected here -->
+                </tbody>
+              </table>
+            </div>
+
+            <div class="pagination-container">
+              <div class="pagination-info">
+                Showing entries <span id="paginationRange">0-0</span> of <span id="totalCount">0</span>
+              </div>
+              <div class="pagination-actions">
+                <button id="prevBtn" class="btn btn-icon" onclick="prevPage()">
+                  <i data-lucide="chevron-left"></i>
+                </button>
+                <button id="nextBtn" class="btn btn-icon" onclick="nextPage()">
+                  <i data-lucide="chevron-right"></i>
+                </button>
+              </div>
+            </div>
+          </section>
         </div>
-      </section>
-
-      <!-- Add / Edit form -->
-      <section class="panel">
-        <h2 class="panel-title">Add / Edit Contact</h2>
-        <form class="form-grid">
-          <div class="form-field">
-            <label for="name">Name</label>
-            <input id="name" placeholder="Contact Name" />
-          </div>
-
-          <div class="form-field">
-            <label for="phone">Phone</label>
-            <input id="phone" placeholder="Phone Number" />
-          </div>
-
-          <div class="form-field">
-            <label for="code">Country code</label>
-            <select id="code">
-              <option value="+91">+91 (India)</option>
-              <option value="+1">+1 (USA)</option>
-              <option value="+44">+44 (UK)</option>
-            </select>
-          </div>
-
-          <div class="form-actions">
-            <button type="button" id="saveBtn" onclick="addContact()">Save Contact</button>
-
-          </div>
-        </form>
-      </section>
-
-      <!-- Table -->
-      <section class="panel">
-        <h2 class="panel-title">Contacts</h2>
-        <table>
-          <thead>
-            <tr>
-              <th>Name</th>
-              <th>Phone</th>
-              <th>Code</th>
-              <th>Action</th>
-            </tr>
-          </thead>
-          <tbody id="contactTable"></tbody>
-        </table>
-
-        <div class="pagination">
-  <button id="prevBtn" onclick="prevPage()">⬅ Prev</button>
-  <button id="nextBtn" onclick="nextPage()">Next ➡</button>
-</div>
-      </section>
+      </div>
     </main>
   </div>
 
+  <div id="toastContainer" class="toast-container"></div>
+
   <script src="./app.js"></script>
+  <script>
+    // Initialize Lucide icons
+    lucide.createIcons();
+  </script>
 </body>
 </html>
