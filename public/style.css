@@ -126,7 +126,7 @@ body {
 
 .field-row {
   display: grid;
-  grid-template-columns: 160px 1fr;
+  grid-template-columns: 110px 1fr;
   gap: 1rem;
 }
 

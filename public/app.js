@@ -108,8 +108,8 @@ async function addContact() {
     return;
   }
 
-  if (!/^[6-9][0-9]{9,10}$/.test(phone)) {
-    showToast("Invalid phone number format", "error");
+  if (!/^\d{7,15}$/.test(phone)) {
+    showToast("Invalid phone number: must be 7-15 digits", "error");
     return;
   }
 

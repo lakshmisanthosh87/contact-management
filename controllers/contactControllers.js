@@ -13,9 +13,9 @@ export const addContact = async (req, res) => {
     }
 
     //// Phone validation
-if (!/^[6-9][0-9]{9,10}$/.test(phone)) {
+if (!/^\d{7,15}$/.test(phone)) {
   return res.status(400).json({
-    message: "Phone number must be 10 or 11 digits and start with 6, 7, 8, or 9"
+    message: "Phone number must be between 7 and 15 digits"
   });
 }
 
