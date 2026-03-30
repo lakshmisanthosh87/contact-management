@@ -1,4 +1,4 @@
-const API = "http://localhost:4000/api/contact";
+const API = "/api/contact";
 
 let page = 1;
 const limit = 5;

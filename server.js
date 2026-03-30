@@ -24,10 +24,13 @@ app.use('/api/contact', contactRoutes)
 // app.use('/api/products',productRoutes)
 
 
-connectDB().then(() => {
+// Try to connect, but don't block if it fails initially
+connectDB();
+
+if (process.env.NODE_ENV !== 'production') {
     app.listen(PORT, () => {                                
-      console.log(`Server is running at http://localhost:${PORT}`);
+        console.log(`Server is running at http://localhost:${PORT}`);
+    });
+}
 
-    })
-
-})
+export default app;
